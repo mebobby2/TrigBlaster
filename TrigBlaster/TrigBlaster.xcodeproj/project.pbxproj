@@ -1184,6 +1184,7 @@
 				07EA69881CF695FF0043E98E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
