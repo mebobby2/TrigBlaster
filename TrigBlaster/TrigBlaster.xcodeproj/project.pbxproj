@@ -141,6 +141,8 @@
 		07EA697D1CF695FE0043E98E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07EA697C1CF695FE0043E98E /* AppDelegate.m */; };
 		07EA69801CF695FE0043E98E /* HelloWorldLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 07EA697F1CF695FE0043E98E /* HelloWorldLayer.m */; };
 		07EA69831CF695FE0043E98E /* IntroLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 07EA69821CF695FE0043E98E /* IntroLayer.m */; };
+		07EA698B1CF696FD0043E98E /* Images in Resources */ = {isa = PBXBuildFile; fileRef = 07EA69891CF696FD0043E98E /* Images */; };
+		07EA698C1CF696FD0043E98E /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = 07EA698A1CF696FD0043E98E /* Sounds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -425,6 +427,8 @@
 		07EA697F1CF695FE0043E98E /* HelloWorldLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelloWorldLayer.m; sourceTree = "<group>"; };
 		07EA69811CF695FE0043E98E /* IntroLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroLayer.h; sourceTree = "<group>"; };
 		07EA69821CF695FE0043E98E /* IntroLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroLayer.m; sourceTree = "<group>"; };
+		07EA69891CF696FD0043E98E /* Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Images; sourceTree = "<group>"; };
+		07EA698A1CF696FD0043E98E /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -501,6 +505,8 @@
 		07EA67EB1CF695FD0043E98E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				07EA69891CF696FD0043E98E /* Images */,
+				07EA698A1CF696FD0043E98E /* Sounds */,
 				07EA67EC1CF695FD0043E98E /* Default.png */,
 				07EA67EE1CF695FD0043E98E /* Default@2x.png */,
 				07EA67F01CF695FD0043E98E /* Default-568h@2x.png */,
@@ -935,11 +941,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07EA698B1CF696FD0043E98E /* Images in Resources */,
 				07EA67FD1CF695FD0043E98E /* Icon.png in Resources */,
 				07EA695B1CF695FE0043E98E /* ChangeLog in Resources */,
 				07EA67EF1CF695FD0043E98E /* Default@2x.png in Resources */,
 				07EA67F91CF695FD0043E98E /* Icon-Small.png in Resources */,
 				07EA67F51CF695FD0043E98E /* Icon-72.png in Resources */,
+				07EA698C1CF696FD0043E98E /* Sounds in Resources */,
 				07EA67ED1CF695FD0043E98E /* Default.png in Resources */,
 				07EA67F71CF695FD0043E98E /* Icon-Small-50.png in Resources */,
 				07EA68021CF695FD0043E98E /* iTunesArtwork in Resources */,
@@ -1125,7 +1133,7 @@
 				GCC_PREFIX_HEADER = TrigBlaster/Prefix.pch;
 				HEADER_SEARCH_PATHS = "\"TrigBlaster/libs/kazmath/include\"";
 				INFOPLIST_FILE = TrigBlaster/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-lsqlite3",
@@ -1145,7 +1153,7 @@
 				GCC_PREFIX_HEADER = TrigBlaster/Prefix.pch;
 				HEADER_SEARCH_PATHS = "\"TrigBlaster/libs/kazmath/include\"";
 				INFOPLIST_FILE = TrigBlaster/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-lsqlite3",
