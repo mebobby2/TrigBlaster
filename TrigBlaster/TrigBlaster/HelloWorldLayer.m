@@ -153,13 +153,17 @@ const float BorderCollisionDamping = 0.4f;
     
     _playerSprite.position = ccp(newX, newY);
     
-
-    float angle = atan2(_playerSpeedY, _playerSpeedX);
     
-    //the sprite for the spaceship points straight up, which corresponds to the default rotation value of 0 degrees. But in mathematics, an angle of 0 degrees (or radians) doesn’t point upward, but to the right.
-    //And that’s not the only problem: in Cocos2D, rotation happens in a clockwise direction, but in mathematics it goes counterclockwise.
-    //This adds 90 degrees to make the sprite point to the right at an angle of 0 degrees, so that it lines up with the way atan2f() does things. Then it adds the negative angle – in other words, subtracts the angle – in order to rotate the proper way around.
-    _playerSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
+    float speed = sqrtf(_playerSpeedX*_playerSpeedX + _playerSpeedY*_playerSpeedY);
+    if (speed > 40.0f) {
+        
+        float angle = atan2(_playerSpeedY, _playerSpeedX);
+        
+        //the sprite for the spaceship points straight up, which corresponds to the default rotation value of 0 degrees. But in mathematics, an angle of 0 degrees (or radians) doesn’t point upward, but to the right.
+        //And that’s not the only problem: in Cocos2D, rotation happens in a clockwise direction, but in mathematics it goes counterclockwise.
+        //This adds 90 degrees to make the sprite point to the right at an angle of 0 degrees, so that it lines up with the way atan2f() does things. Then it adds the negative angle – in other words, subtracts the angle – in order to rotate the proper way around.
+        _playerSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
+    }
 }
 
 @end
