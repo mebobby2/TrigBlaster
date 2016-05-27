@@ -63,6 +63,7 @@ const float BorderCollisionDamping = 0.4f;
 -(void)update:(ccTime)delta
 {
     [self updatePlayer:delta];
+    [self updateTurret:delta];
 }
 
 -(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
@@ -196,6 +197,18 @@ const float BorderCollisionDamping = 0.4f;
     //And that’s not the only problem: in Cocos2D, rotation happens in a clockwise direction, but in mathematics it goes counterclockwise.
     //This adds 90 degrees to make the sprite point to the right at an angle of 0 degrees, so that it lines up with the way atan2f() does things. Then it adds the negative angle – in other words, subtracts the angle – in order to rotate the proper way around.
     _playerSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(_playerAngle);
+}
+
+-(void)updateTurret:(ccTime)dt
+{
+    // We are using pythagaras to calculate the rotation, therefore we need to operate on
+    // the X and Y components directly. If we used vectors, like in SpaceWars, we do not need to
+    // operate on the X and Y components, just using vectors.
+    float deltaX = _playerSprite.position.x - _turretSprite.position.x;
+    float deltaY = _playerSprite.position.y - _turretSprite.position.y;
+    
+    float angle = atan2f(deltaY, deltaX);
+    _turretSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
 }
 
 @end
