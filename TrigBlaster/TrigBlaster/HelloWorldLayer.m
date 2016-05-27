@@ -5,6 +5,9 @@
 {
     CGSize _winSize;
     CCSprite *_playerSprite;
+    
+    UIAccelerationValue _accelerometerX;
+    UIAccelerationValue _accerlerometerY;
 }
 
 + (CCScene*)scene
@@ -24,8 +27,24 @@
         _playerSprite = [CCSprite spriteWithFile:@"Images/Player.png"];
         _playerSprite.position = ccp(_winSize.width - 50.0f, 50.0f);
         [self addChild:_playerSprite];
+        
+        self.accelerometerEnabled = YES;
     }
     return self;
+}
+
+-(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
+{
+//    An accelerometer records how much gravity currently pulls on it. Because the user is holding the iPhone in her
+//    hands, and hands are never completely steady, there are a lot of tiny fluctuations in this gravity value. We are not
+//    so much interested in these unsteady motions as in the larger changes in orientation that the user makes to the device.
+//    By applying this simple low-pass filter, you retain this orientation information but filter out the less important
+//    fluctuations.
+    
+    const double FilteringFactor = 0.75;
+    
+    _accelerometerX = acceleration.x * FilteringFactor + _accelerometerX * (1.0 - FilteringFactor);
+    _accerlerometerY = acceleration.y * FilteringFactor + _accerlerometerY * (1.0 - FilteringFactor);
 }
 
 @end
