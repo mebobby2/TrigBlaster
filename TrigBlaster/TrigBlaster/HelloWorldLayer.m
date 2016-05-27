@@ -1,8 +1,13 @@
 #import "HelloWorldLayer.h"
 #import "SimpleAudioEngine.h"
 
+//Note: Now why is there an f behind those numbers in the code: 0.4f, 0.1f, 0.0f, and so on? And why did you use atan2f() instead of just atan2()? When you write games, you want to work with floating point numbers as much as possible because, unlike integers, they allow for digits behind the decimal point. This allows you to be much more precise.
+//There are two types of floating point numbers: floats and doubles (there is also a “long double”, but that’s the same as a double on the iPhone). Doubles are more precise than floats but they also take up more memory and are slower in practice. When you don’t put the f behind the number and just use 0.4, 0.1, 0.0, or when you use the version of a math function without the f suffix, you are working with doubles and not floats.
+//It doesn’t really matter if you use a double here and there. For example, the time value that CACurrentMediaTime() returns is a double. However, if you’re doing hundreds of thousands of calculations every frame, you will notice the difference. I did a quick test on a couple of my devices and the same calculations using doubles were 1.5 to 2 times slower. So it’s a good habit to stick to regular floats where you can.
+
 const float MaxPlayerAccel = 400.0f;
 const float MaxPlaySpeed = 200.0f;
+const float BorderCollisionDamping = 0.4f;
 
 @implementation HelloWorldLayer
 {
@@ -104,8 +109,47 @@ const float MaxPlaySpeed = 200.0f;
     float newX = _playerSprite.position.x + _playerSpeedX*dt;
     float newY = _playerSprite.position.y + _playerSpeedY*dt;
     
-    newX = MIN(_winSize.width, MAX(newX, 0));
-    newY = MIN(_winSize.height, MAX(newY, 0));
+//    newX = MIN(_winSize.width, MAX(newX, 0));
+//    newY = MIN(_winSize.height, MAX(newY, 0));
+    
+    BOOL collideWithVerticalBorder = NO;
+    BOOL collideWithHorizontalBorder = NO;
+    
+    if (newX < 0.0f)
+    {
+        newX = 0.0f;
+        collideWithVerticalBorder = YES;
+    }
+    else if (newX > _winSize.width)
+    {
+        newX = _winSize.width;
+        collideWithVerticalBorder = YES;
+    }
+    
+    if (newY < 0.0f) {
+        newY = 0.0f;
+        collideWithHorizontalBorder = YES;
+    }
+    else if (newY > _winSize.height)
+    {
+        newY = _winSize.height;
+        collideWithHorizontalBorder = YES;
+    }
+    
+    if (collideWithVerticalBorder) {
+        _playerAccelX = -_playerAccelX * BorderCollisionDamping;
+        _playerSpeedX = -_playerSpeedX * BorderCollisionDamping;
+        _playerAccelY = _playerAccelY * BorderCollisionDamping;
+        _playerSpeedY = _playerSpeedY * BorderCollisionDamping;
+    }
+    
+    if (collideWithHorizontalBorder) {
+        _playerAccelX = _playerAccelX * BorderCollisionDamping;
+        _playerSpeedX = _playerSpeedX * BorderCollisionDamping;
+        _playerAccelY = -_playerAccelY * BorderCollisionDamping;
+        _playerSpeedY = -_playerSpeedY * BorderCollisionDamping;
+    }
+    
     
     _playerSprite.position = ccp(newX, newY);
     
