@@ -916,6 +916,7 @@
 				TargetAttributes = {
 					07EA67D21CF695FC0043E98E = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = 559JM9FNQJ;
 					};
 				};
 			};
@@ -1127,6 +1128,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1141,6 +1144,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobby.TrigBlaster;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1149,6 +1153,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = TrigBlaster/Prefix.pch;
@@ -1162,6 +1168,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bobby.TrigBlaster;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};
