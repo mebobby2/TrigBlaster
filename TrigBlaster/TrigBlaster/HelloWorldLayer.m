@@ -23,6 +23,7 @@ const float BorderCollisionDamping = 0.4f;
     float _playerSpeedY;
     
     float _playerAngle;
+    float _lastAngle;
 }
 
 + (CCScene*)scene
@@ -160,6 +161,20 @@ const float BorderCollisionDamping = 0.4f;
     if (speed > 40.0f)
     {
         float angle = atan2(_playerSpeedY, _playerSpeedX);
+        
+        // Did the angle flip from +Pi to -Pi, or -Pi to +Pi?
+        // there is something you should know about atan2f(). It does not return an angle in the convenient range of 0 to 360 degrees, but a value between +π and –π radians, or between +180 and -180 degrees to us non-mathematicians.
+        // That means if you’re turning counterclockwise, at some point the angle will jump from +180 degrees to -180 degrees; or the other way around if you’re turning clockwise. And that’s where the weird spinning effect happens.
+        // The problem is that when the new angle jumps from 180 degrees to -180 degrees, _playerAngle is still positive because it is trailing behind a bit. When you blend these two together, the spaceship actually starts turning the other way around. It took me a while to figure out what was causing this!
+        // To fix it, you need to recognize when the angle makes that jump and adjust _playerAngle accordingly.
+        if (_lastAngle < -3.0f && angle > 3.0f) {
+            _playerAngle += M_PI * 2.0f;
+        }
+        else if (_lastAngle > 3.0f && angle < -3.0f)
+        {
+            _playerAngle -= M_PI * 2.0f;
+        }
+        _lastAngle = angle;
         
         // We blend the player's rotation so we do not get any sharp rotation clitches.
         // The _playerAngle variable combines the new angle and its own previous value by multiplying them with a blend factor. In human-speak, this means the new angle only counts for 20% towards the actual rotation that you set on the spaceship. Of course, over time more and more of the new angle gets added so that eventually the spaceship does point in the proper direction.
