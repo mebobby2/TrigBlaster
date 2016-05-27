@@ -89,10 +89,10 @@ const float MaxPlaySpeed = 200.0f;
     
     // The acceleration is expressed in points per second (actually, per second squared, but don’t worry about that) but update: is performed a lot more often than once per second. To compensate for this difference, you multiply the acceleration by the elapsed or “delta” time, dt. Without this, the spaceship would move about sixty times faster than it should!
     _playerSpeedX += _playerAccelX * dt;
-    _playerAccelY += _playerAccelY * dt;
+    _playerSpeedY += _playerAccelY * dt;
     
-    _playerAccelX = fmaxf(fminf(_playerSpeedX, MaxPlaySpeed), -MaxPlaySpeed);
-    _playerAccelY = fmaxf(fminf(_playerSpeedY, MaxPlaySpeed), -MaxPlaySpeed);
+    _playerSpeedX = fmaxf(fminf(_playerSpeedX, MaxPlaySpeed), -MaxPlaySpeed);
+    _playerSpeedY = fmaxf(fminf(_playerSpeedY, MaxPlaySpeed), -MaxPlaySpeed);
     
 //    Add the current speed to the sprite’s position. Again, speed is measured in points per second, so you need to multiply it by the delta time to make it work correctly
     
