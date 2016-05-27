@@ -13,6 +13,8 @@ const float BorderCollisionDamping = 0.4f;
 {
     CGSize _winSize;
     CCSprite *_playerSprite;
+    CCSprite *_cannonSprite;
+    CCSprite *_turretSprite;
     
     UIAccelerationValue _accelerometerX;
     UIAccelerationValue _accelerometerY;
@@ -39,6 +41,14 @@ const float BorderCollisionDamping = 0.4f;
     if (self = [super initWithColor:ccc4(94, 63, 107, 255)])
     {
         _winSize = [CCDirector sharedDirector].winSize;
+        
+        _cannonSprite = [CCSprite spriteWithFile:@"Images/Cannon.png"];
+        _cannonSprite.position = ccp(_winSize.width/2.0f, _winSize.height/2.0f);
+        [self addChild:_cannonSprite];
+        
+        _turretSprite = [CCSprite spriteWithFile:@"Images/Turret.png"];
+        _turretSprite.position = ccp(_winSize.width/2.0f, _winSize.height/2.0f);
+        [self addChild:_turretSprite];
         
         _playerSprite = [CCSprite spriteWithFile:@"Images/Player.png"];
         _playerSprite.position = ccp(_winSize.width - 50.0f, 50.0f);
