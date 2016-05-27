@@ -21,6 +21,8 @@ const float BorderCollisionDamping = 0.4f;
     float _playerAccelY;
     float _playerSpeedX;
     float _playerSpeedY;
+    
+    float _playerAngle;
 }
 
 + (CCScene*)scene
@@ -155,15 +157,20 @@ const float BorderCollisionDamping = 0.4f;
     
     
     float speed = sqrtf(_playerSpeedX*_playerSpeedX + _playerSpeedY*_playerSpeedY);
-    if (speed > 40.0f) {
-        
+    if (speed > 40.0f)
+    {
         float angle = atan2(_playerSpeedY, _playerSpeedX);
         
-        //the sprite for the spaceship points straight up, which corresponds to the default rotation value of 0 degrees. But in mathematics, an angle of 0 degrees (or radians) doesn’t point upward, but to the right.
-        //And that’s not the only problem: in Cocos2D, rotation happens in a clockwise direction, but in mathematics it goes counterclockwise.
-        //This adds 90 degrees to make the sprite point to the right at an angle of 0 degrees, so that it lines up with the way atan2f() does things. Then it adds the negative angle – in other words, subtracts the angle – in order to rotate the proper way around.
-        _playerSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
+        // We blend the player's rotation so we do not get any sharp rotation clitches.
+        // The _playerAngle variable combines the new angle and its own previous value by multiplying them with a blend factor. In human-speak, this means the new angle only counts for 20% towards the actual rotation that you set on the spaceship. Of course, over time more and more of the new angle gets added so that eventually the spaceship does point in the proper direction.
+        const float RotationBlendFactor = 0.2f;
+        _playerAngle = angle * RotationBlendFactor + _playerAngle * (1.0f - RotationBlendFactor);
     }
+    
+    //the sprite for the spaceship points straight up, which corresponds to the default rotation value of 0 degrees. But in mathematics, an angle of 0 degrees (or radians) doesn’t point upward, but to the right.
+    //And that’s not the only problem: in Cocos2D, rotation happens in a clockwise direction, but in mathematics it goes counterclockwise.
+    //This adds 90 degrees to make the sprite point to the right at an angle of 0 degrees, so that it lines up with the way atan2f() does things. Then it adds the negative angle – in other words, subtracts the angle – in order to rotate the proper way around.
+    _playerSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(_playerAngle);
 }
 
 @end
