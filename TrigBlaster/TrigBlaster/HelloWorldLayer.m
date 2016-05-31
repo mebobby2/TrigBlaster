@@ -23,6 +23,7 @@ const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per se
 const float CannonMissileSpeed = 350.0f;
 
 const float CannonHitRadius = 25.0f;
+const float PlayerHitRadius = 10.0f;
 
 @implementation HelloWorldLayer
 {
@@ -54,6 +55,8 @@ const float CannonHitRadius = 25.0f;
     CFTimeInterval _touchTime;
     
     CFTimeInterval _lastCannoShotAt;
+    
+    NSMutableArray *_cannonMissiles;
 }
 
 + (CCScene*)scene
@@ -108,6 +111,8 @@ const float CannonHitRadius = 25.0f;
         _playerMissileSprite = [CCSprite spriteWithFile:@"Images/PlayerMissile.png"];
         _playerMissileSprite.visible = NO;
         [self addChild:_playerMissileSprite];
+        
+        _cannonMissiles = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -118,6 +123,7 @@ const float CannonHitRadius = 25.0f;
     [self updatePlayerMissile:delta];
     [self updateTurret:delta];
     [self shootPlayer:delta];
+    [self updateCannonMissiles:delta];
     
     [self checkCollisionOfPlayerWithCannon];
     
@@ -387,6 +393,7 @@ const float CannonHitRadius = 25.0f;
                      [CCMoveTo actionWithDuration:duration position:destination],
                      [CCCallBlock actionWithBlock:^
                       {
+                          [_cannonMissiles removeObject:cannonMissileSprite];
                           [cannonMissileSprite removeFromParentAndCleanup:YES];
                       }],
                      nil];
@@ -395,6 +402,7 @@ const float CannonHitRadius = 25.0f;
         cannonMissileSprite.rotation = _turretSprite.rotation;
         [self addChild:cannonMissileSprite];
         [cannonMissileSprite runAction:action];
+        [_cannonMissiles addObject:cannonMissileSprite];
         _lastCannoShotAt = CACurrentMediaTime();
     }
 }
@@ -449,6 +457,27 @@ const float CannonHitRadius = 25.0f;
         _cannonHP = MAX(0, _cannonHP - 5);
         
         _playerSpin = 180.0f * 3.0f;
+    }
+}
+
+-(void)updateCannonMissiles:(ccTime)dt
+{
+    for (CCSprite* cannonMissileSprite in _cannonMissiles)
+    {
+        if (cannonMissileSprite.visible) {
+            float deltaX = cannonMissileSprite.position.x - _playerSprite.position.x;
+            float deltaY = cannonMissileSprite.position.y - _playerSprite.position.y;
+            
+            float distance = sqrtf(deltaX*deltaX + deltaY*deltaY);
+            if (distance < PlayerHitRadius)
+            {
+                [[SimpleAudioEngine sharedEngine] playEffect:@"Sounds/Hit.wav"];
+                
+                _playerHP = MAX(0, _playerHP - 10);
+                
+                cannonMissileSprite.visible = NO;
+            }
+        }
     }
 }
 
