@@ -20,6 +20,7 @@ const float CannonCollisionSpeed = 200.0f;
 const float Margin = 20.0f;
 
 const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per second
+const float CannonMissileSpeed = 350.0f;
 
 const float CannonHitRadius = 25.0f;
 
@@ -51,6 +52,8 @@ const float CannonHitRadius = 25.0f;
     CCSprite *_playerMissileSprite;
     CGPoint _touchLocation;
     CFTimeInterval _touchTime;
+    
+    CFTimeInterval _lastCannoShotAt;
 }
 
 + (CCScene*)scene
@@ -114,6 +117,7 @@ const float CannonHitRadius = 25.0f;
     [self updatePlayer:delta];
     [self updatePlayerMissile:delta];
     [self updateTurret:delta];
+    [self shootPlayer:delta];
     
     [self checkCollisionOfPlayerWithCannon];
     
@@ -365,6 +369,34 @@ const float CannonHitRadius = 25.0f;
     
     float angle = atan2f(deltaY, deltaX);
     _turretSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
+}
+
+-(void)shootPlayer:(ccTime)dt
+{
+    if (CACurrentMediaTime() - _lastCannoShotAt > 0.6)
+    {
+        float deltaX = _playerSprite.position.x - _turretSprite.position.x;
+        float deltaY = _playerSprite.position.y - _turretSprite.position.y;
+        
+        float hypotenuse = sqrtf(deltaX*deltaX + deltaY*deltaY);
+        ccTime duration = hypotenuse / CannonMissileSpeed;
+        CGPoint destination = ccp(_playerSprite.position.x, _playerSprite.position.y);
+        
+        CCSprite *cannonMissileSprite = [CCSprite spriteWithFile:@"Images/CannonMissile.png"];
+        id action = [CCSequence actions:
+                     [CCMoveTo actionWithDuration:duration position:destination],
+                     [CCCallBlock actionWithBlock:^
+                      {
+                          [cannonMissileSprite removeFromParentAndCleanup:YES];
+                      }],
+                     nil];
+        
+        cannonMissileSprite.position = _turretSprite.position;
+        cannonMissileSprite.rotation = _turretSprite.rotation;
+        [self addChild:cannonMissileSprite];
+        [cannonMissileSprite runAction:action];
+        _lastCannoShotAt = CACurrentMediaTime();
+    }
 }
 
 -(void)drawHealthBar:(CCDrawNode*)node hp:(int)hp
