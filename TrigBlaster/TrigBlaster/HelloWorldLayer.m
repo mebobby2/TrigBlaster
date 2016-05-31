@@ -155,10 +155,36 @@ const float Margin = 20.0f;
             float adjacent, opposite;
             CGPoint destination;
             
-            angle = M_PI_2 - angle;
-            adjacent = _playerMissileSprite.position.y + Margin;
-            opposite = tanf(angle) * adjacent;
-            destination = ccp(_playerMissileSprite.position.x - opposite, -Margin);
+            if (angle <= M_PI_4 && angle > -3.0f * M_PI_4)
+            {
+                // shoot down
+                angle = M_PI_2 - angle;
+                adjacent = _playerMissileSprite.position.y + Margin;
+                opposite = tanf(angle) * adjacent;
+                destination = ccp(_playerMissileSprite.position.x - opposite, -Margin);
+            }
+            else if (angle > M_PI_4 && angle <= 3.0f * M_PI_4)
+            {
+                // shoot up
+                angle = M_PI_2 - angle;
+                adjacent = _winSize.height - _playerMissileSprite.position.y + Margin;
+                opposite = tanf(angle) * adjacent;
+                destination = ccp(_playerMissileSprite.position.x + opposite, _winSize.height + Margin);
+            }
+            else if (angle <= M_PI_4 && angle > -M_PI_4)
+            {
+                // shoot right
+                angle = _winSize.width - _playerMissileSprite.position.x + Margin;
+                opposite = tanf(angle) * adjacent;
+                destination = ccp(_winSize.width + Margin, _playerMissileSprite.position.y + opposite);
+            }
+            else  // angle > 3.0f * M_PI_4 || angle <= -3.0f * M_PI_4
+            {
+                // shoot left
+                adjacent = _playerMissileSprite.position.x + Margin;
+                opposite = tanf(angle) * adjacent;
+                destination = ccp(-Margin, _playerMissileSprite.position.y - opposite);
+            }
             
             id action = [CCSequence actions:
                          [CCMoveTo actionWithDuration:2.0f position:destination],
