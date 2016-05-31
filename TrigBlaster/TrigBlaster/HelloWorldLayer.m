@@ -29,6 +29,8 @@ const float OrbiterSpeed = 120.0f;  // degrees per second
 const float OrbiterRadius = 60.0f;  // degrees
 const float OrbiterCollisionRadius = 20.0f;
 
+const CFTimeInterval DarkenDuration = 2.0;
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -64,6 +66,11 @@ const float OrbiterCollisionRadius = 20.0f;
     
     CCSprite *_orbiterSprite;
     float _orbiterAngle;  // in degrees
+    
+    CCLabelTTF *_gameOverLabel;
+    CCLayerColor *_darkenLayer;
+    BOOL _gameOver;
+    CFTimeInterval _gameOverElapsed;
 }
 
 + (CCScene*)scene
@@ -141,6 +148,8 @@ const float OrbiterCollisionRadius = 20.0f;
     [self drawHealthBar:_cannonHealthBar hp:_cannonHP];
     
     [self updateOrbiter:delta];
+    
+    [self checkGameOver:delta];
 }
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -154,6 +163,13 @@ const float OrbiterCollisionRadius = 20.0f;
 
 -(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    if (_gameOver)
+    {
+        CCScene *scene = [HelloWorldLayer scene];
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionZoomFlipX transitionWithDuration:0.5f scene:scene]];
+        return;
+    }
+    
     if (CACurrentMediaTime() - _touchTime < 0.3 && !_playerMissileSprite.visible)
     {
         UITouch *touch = [touches anyObject];
@@ -391,6 +407,8 @@ const float OrbiterCollisionRadius = 20.0f;
 
 -(void)shootPlayer:(ccTime)dt
 {
+    if (_gameOver) return;
+    
     if (CACurrentMediaTime() - _lastCannoShotAt > 0.6)
     {
         float deltaX = _playerSprite.position.x - _turretSprite.position.x;
@@ -549,6 +567,38 @@ const float OrbiterCollisionRadius = 20.0f;
             
             _orbiterSprite.scale = 2.0f;
             [_orbiterSprite runAction:[CCScaleTo actionWithDuration:0.5f scale:1.0f]];
+        }
+    }
+}
+
+-(void)checkGameOver:(ccTime)dt
+{
+    if (_playerHP > 0 && _cannonHP > 0) {
+        return;
+    }
+    
+    if (!_gameOver) {
+        _gameOver = YES;
+        _gameOverElapsed = 0.0;
+        self.accelerometerEnabled = NO;
+        
+        _darkenLayer = [[CCLayerColor alloc] initWithColor:ccc4(0, 0, 0, 255)];
+        _darkenLayer.opacity = 0;
+        [self addChild:_darkenLayer];
+        
+        NSString *text = (_playerHP == 0) ? @"GAME OVER" : @"Victory!";
+        _gameOverLabel = [[CCLabelTTF alloc] initWithString:text fontName:@"Helvetica" fontSize:24.0f];
+        _gameOverLabel.position = ccp(_winSize.width/2.0f + 0.5f, _winSize.height/2.0f + 50.0f);
+        [self addChild:_gameOverLabel];
+    }
+    else
+    {
+        _gameOverElapsed += dt;
+        if (_gameOverElapsed < DarkenDuration)
+        {
+            float t = _gameOverElapsed / DarkenDuration;
+            t = sinf(t * M_PI_2); // ease out. CCEaseSineIn does the same thing behind the scenes.
+            _darkenLayer.opacity = 200.0f * t;
         }
     }
 }
