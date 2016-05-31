@@ -21,6 +21,8 @@ const float Margin = 20.0f;
 
 const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per second
 
+const float CannonHitRadius = 25.0f;
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -110,6 +112,7 @@ const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per se
 -(void)update:(ccTime)delta
 {
     [self updatePlayer:delta];
+    [self updatePlayerMissile:delta];
     [self updateTurret:delta];
     
     [self checkCollisionOfPlayerWithCannon];
@@ -414,6 +417,26 @@ const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per se
         _cannonHP = MAX(0, _cannonHP - 5);
         
         _playerSpin = 180.0f * 3.0f;
+    }
+}
+
+-(void)updatePlayerMissile:(ccTime)dt
+{
+    if (_playerMissileSprite.visible)
+    {
+        float deltaX = _playerMissileSprite.position.x - _turretSprite.position.x;
+        float deltaY = _playerMissileSprite.position.y - _turretSprite.position.y;
+        
+        float distance = sqrtf(deltaX*deltaX + deltaY*deltaY);
+        if (distance < CannonHitRadius)
+        {
+            [[SimpleAudioEngine sharedEngine] playEffect:@"Sounds/Hit.wav"];
+            
+            _cannonHP = MAX(0, _cannonHP - 10);
+            
+            _playerMissileSprite.visible = NO;
+            [_playerMissileSprite stopAllActions];
+        }
     }
 }
 
