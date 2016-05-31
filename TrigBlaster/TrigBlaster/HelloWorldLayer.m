@@ -86,7 +86,7 @@ const float CannonCollisionSpeed = 200.0f;
         _playerHP = MaxHP;
         _cannonHP = MaxHP;
         
-        [[SimpleAudioEngine sharedEngine] preloadEffect:@"Collision.wav"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"Sounds/Collision.wav"];
     }
     return self;
 }
@@ -288,7 +288,7 @@ const float CannonCollisionSpeed = 200.0f;
     
     if (distance <= CannonCollisionRadius + PlayerCollisionRadius)
     {
-        [[SimpleAudioEngine sharedEngine] playEffect:@"Collision.wav"];
+        [[SimpleAudioEngine sharedEngine] playEffect:@"Sounds/Collision.wav"];
         
         float angle = atan2(deltaY, deltaX);
         
