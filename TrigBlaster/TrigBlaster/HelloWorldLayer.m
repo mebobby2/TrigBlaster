@@ -16,6 +16,8 @@ const float HealthBarHeight = 4.0f;
 const float CannonCollisionRadius = 20.0f;
 const float PlayerCollisionRadius = 10.0f;
 
+const float CannonCollisionSpeed = 200.0f;
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -287,6 +289,16 @@ const float PlayerCollisionRadius = 10.0f;
     if (distance <= CannonCollisionRadius + PlayerCollisionRadius)
     {
         [[SimpleAudioEngine sharedEngine] playEffect:@"Collision.wav"];
+        
+        float angle = atan2(deltaY, deltaX);
+        
+        _playerSpeedX = cosf(angle) * CannonCollisionSpeed;
+        _playerSpeedY = sinf(angle) * CannonCollisionSpeed;
+        _playerAccelX = 0.0f;
+        _playerAccelY = 0.0f;
+        
+        _playerHP = MAX(0, _playerHP - 20);
+        _cannonHP = MAX(0, _cannonHP - 5);
     }
 }
 
