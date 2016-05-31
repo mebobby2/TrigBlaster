@@ -71,6 +71,8 @@ const CFTimeInterval DarkenDuration = 2.0;
     CCLayerColor *_darkenLayer;
     BOOL _gameOver;
     CFTimeInterval _gameOverElapsed;
+    
+    float _gameOverDampen;
 }
 
 + (CCScene*)scene
@@ -579,6 +581,7 @@ const CFTimeInterval DarkenDuration = 2.0;
     
     if (!_gameOver) {
         _gameOver = YES;
+         _gameOverDampen = 1.0f;
         _gameOverElapsed = 0.0;
         self.accelerometerEnabled = NO;
         
@@ -600,6 +603,14 @@ const CFTimeInterval DarkenDuration = 2.0;
             t = sinf(t * M_PI_2); // ease out. CCEaseSineIn does the same thing behind the scenes.
             _darkenLayer.opacity = 200.0f * t;
         }
+        
+//        If you take the absolute value of cosf() – using fabsf() – then the section that would previously go below zero is flipped.
+//        Because the output of these functions lies between 0.0 and 1.0, you multiply it by 50 to stretch it out a little. The argument to cosf() is normally an angle, but you’re giving it the _gameOverElapsed time to make the cosine move forward through its curve.
+//        The factor 3.0 is just to make it go a bit faster.
+        
+        float y = fabsf(cosf(_gameOverElapsed * 3.0f)) * 50.0f * _gameOverDampen;
+        _gameOverDampen = fmaxf(0.0f, _gameOverDampen - 0.3f * dt);
+        _gameOverLabel.position = ccp(_gameOverLabel.position.x, _winSize.height/2.0f + y);
     }
 }
 
