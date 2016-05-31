@@ -157,9 +157,9 @@ const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per se
             float adjacent, opposite;
             CGPoint destination;
             
-            if (angle <= M_PI_4 && angle > -3.0f * M_PI_4)
+            if (angle <= -M_PI_4 && angle > -3.0f * M_PI_4)
             {
-                // shoot down
+                // Shoot down
                 angle = M_PI_2 - angle;
                 adjacent = _playerMissileSprite.position.y + Margin;
                 opposite = tanf(angle) * adjacent;
@@ -167,7 +167,7 @@ const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per se
             }
             else if (angle > M_PI_4 && angle <= 3.0f * M_PI_4)
             {
-                // shoot up
+                // Shoot up
                 angle = M_PI_2 - angle;
                 adjacent = _winSize.height - _playerMissileSprite.position.y + Margin;
                 opposite = tanf(angle) * adjacent;
@@ -175,14 +175,14 @@ const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per se
             }
             else if (angle <= M_PI_4 && angle > -M_PI_4)
             {
-                // shoot right
-                angle = _winSize.width - _playerMissileSprite.position.x + Margin;
+                // Shoot right
+                adjacent = _winSize.width - _playerMissileSprite.position.x + Margin;
                 opposite = tanf(angle) * adjacent;
                 destination = ccp(_winSize.width + Margin, _playerMissileSprite.position.y + opposite);
             }
             else  // angle > 3.0f * M_PI_4 || angle <= -3.0f * M_PI_4
             {
-                // shoot left
+                // Shoot left	
                 adjacent = _playerMissileSprite.position.x + Margin;
                 opposite = tanf(angle) * adjacent;
                 destination = ccp(-Margin, _playerMissileSprite.position.y - opposite);
