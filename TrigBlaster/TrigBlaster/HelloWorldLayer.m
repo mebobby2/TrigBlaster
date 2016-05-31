@@ -9,6 +9,10 @@ const float MaxPlayerAccel = 400.0f;
 const float MaxPlaySpeed = 200.0f;
 const float BorderCollisionDamping = 0.4f;
 
+const int MaxHP = 100;
+const float HealthBarWidth = 40.0f;
+const float HealthBarHeight = 4.0f;
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -26,6 +30,11 @@ const float BorderCollisionDamping = 0.4f;
     
     float _playerAngle;
     float _lastAngle;
+    
+    int _playerHP;
+    int _cannonHP;
+    CCDrawNode *_playerHealthBar;
+    CCDrawNode *_cannonHealthBar;
 }
 
 + (CCScene*)scene
@@ -56,6 +65,21 @@ const float BorderCollisionDamping = 0.4f;
         
         self.accelerometerEnabled = YES;
         [self scheduleUpdate]; //Tells cocos2d to call our update method (60fps)
+        
+        
+        _playerHealthBar = [[CCDrawNode alloc] init];
+        _playerHealthBar.contentSize = CGSizeMake(HealthBarWidth, HealthBarHeight);
+        [self addChild:_playerHealthBar];
+        
+        _cannonHealthBar = [[CCDrawNode alloc] init];
+        _playerHealthBar.contentSize = CGSizeMake(HealthBarWidth, HealthBarHeight);
+        [self addChild:_cannonHealthBar];
+
+        _cannonHealthBar.position = ccp(_cannonSprite.position.x - HealthBarWidth/2.0f + 0.5f,
+                                        _cannonSprite.position.y - _cannonSprite.contentSize.height/2.0f - 10.0f + 0.5f);
+        
+        _playerHP = MaxHP;
+        _cannonHP = MaxHP;
     }
     return self;
 }
@@ -64,6 +88,9 @@ const float BorderCollisionDamping = 0.4f;
 {
     [self updatePlayer:delta];
     [self updateTurret:delta];
+    
+    [self drawHealthBar:_playerHealthBar hp:_playerHP];
+    [self drawHealthBar:_cannonHealthBar hp:_cannonHP];
 }
 
 -(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
@@ -197,6 +224,10 @@ const float BorderCollisionDamping = 0.4f;
     //And that’s not the only problem: in Cocos2D, rotation happens in a clockwise direction, but in mathematics it goes counterclockwise.
     //This adds 90 degrees to make the sprite point to the right at an angle of 0 degrees, so that it lines up with the way atan2f() does things. Then it adds the negative angle – in other words, subtracts the angle – in order to rotate the proper way around.
     _playerSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(_playerAngle);
+    
+    
+    _playerHealthBar.position = ccp(_playerSprite.position.x - HealthBarWidth/2.0f + 0.5f,
+                                    _playerSprite.position.y - _playerSprite.contentSize.height/2.0f - 15.0f + 0.5f);
 }
 
 -(void)updateTurret:(ccTime)dt
@@ -209,6 +240,34 @@ const float BorderCollisionDamping = 0.4f;
     
     float angle = atan2f(deltaY, deltaX);
     _turretSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
+}
+
+-(void)drawHealthBar:(CCDrawNode*)node hp:(int)hp
+{
+    [node clear];
+    
+    CGPoint verts[4];
+    verts[0] = ccp(0.0f, 0.0f);
+    verts[1] = ccp(0.0f, HealthBarHeight - 1.0f);
+    verts[2] = ccp(HealthBarWidth - 1.0f, HealthBarHeight - 1.0f);
+    verts[3] = ccp(HealthBarWidth - 1.0f, 0.0f);
+    
+    ccColor4F clearColor = ccc4f(0.0f, 0.0f, 0.0f, 0.0f);
+    ccColor4F fillColor = ccc4f(113.0f/255.0f, 202.0f/255.0f, 53.0f/255.0f, 1.0f);
+    ccColor4F borderColor = ccc4f(35.0f/255.0f, 28.0f/255.0f, 40.0f/255.0f, 1.0f);
+    
+    [node drawPolyWithVerts:verts count:4 fillColor:fillColor borderWidth:1.0f borderColor:borderColor];
+    
+    verts[0].x += 0.5f;
+    verts[0].y += 0.5f;
+    verts[1].x += 0.5f;
+    verts[1].y -= 0.5f;
+    verts[2].x = (HealthBarWidth - 2.0f)*hp/MaxHP + 0.5f;
+    verts[2].y -= 0.5f;
+    verts[3].x = verts[2].x;
+    verts[3].y += 0.5f;
+    
+    [node drawPolyWithVerts:verts count:4 fillColor:fillColor borderWidth:0.0f borderColor:clearColor];
 }
 
 @end
