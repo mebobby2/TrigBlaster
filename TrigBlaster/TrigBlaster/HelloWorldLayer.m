@@ -13,6 +13,9 @@ const int MaxHP = 100;
 const float HealthBarWidth = 40.0f;
 const float HealthBarHeight = 4.0f;
 
+const float CannonCollisionRadius = 20.0f;
+const float PlayerCollisionRadius = 10.0f;
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -80,6 +83,8 @@ const float HealthBarHeight = 4.0f;
         
         _playerHP = MaxHP;
         _cannonHP = MaxHP;
+        
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"Collision.wav"];
     }
     return self;
 }
@@ -88,6 +93,8 @@ const float HealthBarHeight = 4.0f;
 {
     [self updatePlayer:delta];
     [self updateTurret:delta];
+    
+    [self checkCollisionOfPlayerWithCannon];
     
     [self drawHealthBar:_playerHealthBar hp:_playerHP];
     [self drawHealthBar:_cannonHealthBar hp:_cannonHP];
@@ -268,6 +275,19 @@ const float HealthBarHeight = 4.0f;
     verts[3].y += 0.5f;
     
     [node drawPolyWithVerts:verts count:4 fillColor:fillColor borderWidth:0.0f borderColor:clearColor];
+}
+
+-(void)checkCollisionOfPlayerWithCannon
+{
+    float deltaX = _playerSprite.position.x - _turretSprite.position.x;
+    float deltaY = _playerSprite.position.y - _turretSprite.position.y;
+    
+    float distance = sqrtf(deltaX*deltaX + deltaY*deltaY);
+    
+    if (distance <= CannonCollisionRadius + PlayerCollisionRadius)
+    {
+        [[SimpleAudioEngine sharedEngine] playEffect:@"Collision.wav"];
+    }
 }
 
 @end
