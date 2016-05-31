@@ -42,6 +42,10 @@ const float CannonCollisionSpeed = 200.0f;
     CCDrawNode *_cannonHealthBar;
     
     float _playerSpin;
+    
+    CCSprite *_playerMissileSprite;
+    CGPoint _touchLocation;
+    CFTimeInterval _touchTime;
 }
 
 + (CCScene*)scene
@@ -89,6 +93,13 @@ const float CannonCollisionSpeed = 200.0f;
         _cannonHP = MaxHP;
         
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"Sounds/Collision.wav"];
+        
+        
+        self.touchEnabled = YES;
+        
+        _playerMissileSprite = [CCSprite spriteWithFile:@"Images/PlayerMissile.png"];
+        _playerMissileSprite.visible = NO;
+        [self addChild:_playerMissileSprite];
     }
     return self;
 }
