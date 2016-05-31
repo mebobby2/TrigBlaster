@@ -393,8 +393,7 @@ const float PlayerHitRadius = 10.0f;
                      [CCMoveTo actionWithDuration:duration position:destination],
                      [CCCallBlock actionWithBlock:^
                       {
-                          [_cannonMissiles removeObject:cannonMissileSprite];
-                          [cannonMissileSprite removeFromParentAndCleanup:YES];
+                          cannonMissileSprite.visible = NO;
                       }],
                      nil];
         
@@ -462,6 +461,8 @@ const float PlayerHitRadius = 10.0f;
 
 -(void)updateCannonMissiles:(ccTime)dt
 {
+    NSMutableArray *invisibleCannons = [[NSMutableArray alloc] init];
+    
     for (CCSprite* cannonMissileSprite in _cannonMissiles)
     {
         if (cannonMissileSprite.visible) {
@@ -478,6 +479,17 @@ const float PlayerHitRadius = 10.0f;
                 cannonMissileSprite.visible = NO;
             }
         }
+        else
+        {
+            [invisibleCannons addObject:cannonMissileSprite];
+        }
+    }
+    
+    for (CCSprite *cannonSprite in invisibleCannons)
+    {
+        [cannonSprite stopAllActions];
+        [cannonSprite removeFromParentAndCleanup:YES];
+        [_cannonMissiles removeObject:cannonSprite];
     }
 }
 
