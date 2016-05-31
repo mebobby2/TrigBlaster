@@ -17,6 +17,7 @@ const float CannonCollisionRadius = 20.0f;
 const float PlayerCollisionRadius = 10.0f;
 
 const float CannonCollisionSpeed = 200.0f;
+const float Margin = 20.0f;
 
 @implementation HelloWorldLayer
 {
@@ -113,6 +114,64 @@ const float CannonCollisionSpeed = 200.0f;
     
     [self drawHealthBar:_playerHealthBar hp:_playerHP];
     [self drawHealthBar:_cannonHealthBar hp:_cannonHP];
+}
+
+-(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
+    _touchLocation = location;
+    _touchTime = CACurrentMediaTime();
+    
+}
+
+-(void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (CACurrentMediaTime() - _touchTime < 0.3 && !_playerMissileSprite.visible)
+    {
+        UITouch *touch = [touches anyObject];
+        CGPoint location = [[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]];
+        CGPoint diff = ccpSub(location, _touchLocation);
+        
+// The built-in Cocos2D functions work on CGPoint structures. If you look at the code, you’ll see ccpLength() is nothing more than the Pythagorean formula you’ve seen before:
+        
+//        CGFloat ccpLength(const CGPoint v)
+//        {
+//            return sqrtf(v.x*v.x + v.y*v.y);
+//        }
+
+//        It is common in games to combine the x and y values into one type such as CGPoint. Such a value is referred to as a vector
+        
+        if (ccpLength(diff) > 4.0f)
+        {
+//            Remember that the bottom of the screen is y = 0 in Cocos2D
+            
+            float angle = atan2(diff.y, diff.x);
+            _playerMissileSprite.rotation = 90.0f - CC_RADIANS_TO_DEGREES(angle);
+            
+            _playerMissileSprite.position = _playerSprite.position;
+            _playerMissileSprite.visible = YES;
+            
+            float adjacent, opposite;
+            CGPoint destination;
+            
+            angle = M_PI_2 - angle;
+            adjacent = _playerMissileSprite.position.y + Margin;
+            opposite = tanf(angle) * adjacent;
+            destination = ccp(_playerMissileSprite.position.x - opposite, -Margin);
+            
+            id action = [CCSequence actions:
+                         [CCMoveTo actionWithDuration:2.0f position:destination],
+                         [CCCallBlock actionWithBlock:^
+                          {
+                              _playerMissileSprite.visible = NO;
+                          }],
+                         nil];
+            
+            [_playerMissileSprite runAction:action];
+            [[SimpleAudioEngine sharedEngine] playEffect:@"Sounds/Shoot.wav"];
+        }
+    }
 }
 
 -(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
