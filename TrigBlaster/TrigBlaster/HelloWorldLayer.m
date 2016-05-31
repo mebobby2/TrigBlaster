@@ -40,6 +40,8 @@ const float CannonCollisionSpeed = 200.0f;
     int _cannonHP;
     CCDrawNode *_playerHealthBar;
     CCDrawNode *_cannonHealthBar;
+    
+    float _playerSpin;
 }
 
 + (CCScene*)scene
@@ -237,6 +239,16 @@ const float CannonCollisionSpeed = 200.0f;
     
     _playerHealthBar.position = ccp(_playerSprite.position.x - HealthBarWidth/2.0f + 0.5f,
                                     _playerSprite.position.y - _playerSprite.contentSize.height/2.0f - 15.0f + 0.5f);
+    
+    _playerSprite.rotation += _playerSpin;
+    if (_playerSpin > 0.0f)
+    {
+        _playerSpin -= 2.0f * 360.0f * dt;
+        if (_playerSpin < 0.0f)
+        {
+            _playerSpin = 0.0f;
+        }
+    }
 }
 
 -(void)updateTurret:(ccTime)dt
@@ -299,6 +311,8 @@ const float CannonCollisionSpeed = 200.0f;
         
         _playerHP = MAX(0, _playerHP - 20);
         _cannonHP = MAX(0, _cannonHP - 5);
+        
+        _playerSpin = 180.0f * 3.0f;
     }
 }
 
