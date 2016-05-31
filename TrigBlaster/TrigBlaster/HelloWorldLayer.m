@@ -25,6 +25,10 @@ const float CannonMissileSpeed = 350.0f;
 const float CannonHitRadius = 25.0f;
 const float PlayerHitRadius = 10.0f;
 
+const float OrbiterSpeed = 120.0f;  // degrees per second
+const float OrbiterRadius = 60.0f;  // degrees
+const float OrbiterCollisionRadius = 20.0f;
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -57,6 +61,9 @@ const float PlayerHitRadius = 10.0f;
     CFTimeInterval _lastCannoShotAt;
     
     NSMutableArray *_cannonMissiles;
+    
+    CCSprite *_orbiterSprite;
+    float _orbiterAngle;  // in degrees
 }
 
 + (CCScene*)scene
@@ -113,6 +120,9 @@ const float PlayerHitRadius = 10.0f;
         [self addChild:_playerMissileSprite];
         
         _cannonMissiles = [[NSMutableArray alloc] init];
+        
+        _orbiterSprite = [CCSprite spriteWithFile:@"Images/Asteroid.png"];
+        [self addChild:_orbiterSprite];
     }
     return self;
 }
@@ -129,6 +139,8 @@ const float PlayerHitRadius = 10.0f;
     
     [self drawHealthBar:_playerHealthBar hp:_playerHP];
     [self drawHealthBar:_cannonHealthBar hp:_cannonHP];
+    
+    [self updateOrbiter:delta];
 }
 
 -(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -509,6 +521,34 @@ const float PlayerHitRadius = 10.0f;
             
             _playerMissileSprite.visible = NO;
             [_playerMissileSprite stopAllActions];
+        }
+    }
+}
+
+- (void)updateOrbiter:(ccTime)dt
+{
+    _orbiterAngle += OrbiterSpeed * dt;
+    _orbiterAngle = fmodf(_orbiterAngle, 360.0f); //fmodf is same as % modulo operator, but % only works for integers while fmodf works on doubles as well
+    
+    float x = cosf(CC_DEGREES_TO_RADIANS(_orbiterAngle)) * OrbiterRadius;
+    float y = sinf(CC_DEGREES_TO_RADIANS(_orbiterAngle)) * OrbiterRadius;
+    
+    _orbiterSprite.position = ccp(_cannonSprite.position.x + x, _cannonSprite.position.y + y);
+    _orbiterSprite.rotation = -_orbiterAngle;
+    
+    if (_playerMissileSprite.visible)
+    {
+        float deltaX = _playerMissileSprite.position.x - _orbiterSprite.position.x;
+        float deltaY = _playerMissileSprite.position.y - _orbiterSprite.position.y;
+        
+        float distance = sqrtf(deltaX*deltaX + deltaY*deltaY);
+        if (distance < OrbiterCollisionRadius)
+        {
+            _playerMissileSprite.visible = NO;
+            [_playerMissileSprite stopAllActions];
+            
+            _orbiterSprite.scale = 2.0f;
+            [_orbiterSprite runAction:[CCScaleTo actionWithDuration:0.5f scale:1.0f]];
         }
     }
 }
