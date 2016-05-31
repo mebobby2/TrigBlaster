@@ -19,6 +19,8 @@ const float PlayerCollisionRadius = 10.0f;
 const float CannonCollisionSpeed = 200.0f;
 const float Margin = 20.0f;
 
+const float PlayerMissileSpeed = 300.0f; //distance for missile to travel per second
+
 @implementation HelloWorldLayer
 {
     CGSize _winSize;
@@ -186,8 +188,11 @@ const float Margin = 20.0f;
                 destination = ccp(-Margin, _playerMissileSprite.position.y - opposite);
             }
             
+            float hypotenuse = sqrtf(adjacent*adjacent + opposite*opposite);
+            ccTime duration = hypotenuse / PlayerMissileSpeed;
+            
             id action = [CCSequence actions:
-                         [CCMoveTo actionWithDuration:2.0f position:destination],
+                         [CCMoveTo actionWithDuration:duration position:destination],
                          [CCCallBlock actionWithBlock:^
                           {
                               _playerMissileSprite.visible = NO;
